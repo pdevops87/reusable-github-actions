@@ -42,6 +42,7 @@ jobs:
         run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u4j6q5s8
       - uses: actions/download-artifact@v8
         with:
+          if: ${{ inputs.toolName }} == 'maven'
           name: ${{ inputs.appName }}-jar
           path: ./
       - name: build docker image
