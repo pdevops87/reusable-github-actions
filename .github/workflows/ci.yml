@@ -1,15 +1,10 @@
-name: cart
-
+name: frontend
 on:
   workflow_call:
     inputs:
       appName:
         required: true
         type: string
-      toolName:
-        required: true
-        type: string
-
 
 jobs:
   test:
