@@ -15,19 +15,19 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
 jobs:
 
-  build:
-    runs-on: self-hosted
-    if: ${{ inputs.toolName == 'maven' }}
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-      # Runs a set of commands using the runners shell
-      - name: Build with Maven
-        run: mvn clean package
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ inputs.appName }}-jar
-          path: target/${{ inputs.appName }}-1.0.jar
+#  build:
+#    runs-on: self-hosted
+#    if: ${{ inputs.toolName == 'maven' }}
+#    steps:
+#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#      - uses: actions/checkout@v4
+#      # Runs a set of commands using the runners shell
+#      - name: Build with Maven
+#        run: mvn clean package
+#      - uses: actions/upload-artifact@v4
+#        with:
+#          name: ${{ inputs.appName }}-jar
+#          path: target/${{ inputs.appName }}-1.0.jar
   test:
     runs-on: self-hosted
     steps:
