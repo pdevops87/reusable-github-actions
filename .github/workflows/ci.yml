@@ -1,11 +1,11 @@
-name: frontend
+name: CI
 on:
   workflow_call:
     inputs:
       appName:
         required: true
         type: string
-      appType:
+      apptype:
         required: true
         type: string
 
@@ -16,8 +16,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
       # Runs a set of commands using the runners shell
-      - name: Run ${{ inputs.appType }} test
-        run: echo ${{ inputs.appType }} test
+      - name: Run ${{ inputs.apptype }} test
+        run: echo ${{ inputs.apptype }} test
   docker:
     needs: test
     runs-on: self-hosted
