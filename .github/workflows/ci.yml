@@ -9,7 +9,6 @@ on:
         required: true
         type: string
 
-
 jobs:
   test:
     runs-on: self-hosted
