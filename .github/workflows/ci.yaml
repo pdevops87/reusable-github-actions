@@ -1,9 +1,10 @@
 # This is a basic workflow to help you get started with Actions
-
-name: shipping
-
+# this is called
+name: CI
 # Controls when the workflow will run
 on:
+  push:
+    branches: ["main"]
   workflow_call:
     inputs:
       appName:
@@ -17,7 +18,7 @@ jobs:
 
   build:
     runs-on: self-hosted
-    if: ${{ inputs.toolName }} == 'maven'
+    if: ${{ inputs.toolName == 'maven' }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
