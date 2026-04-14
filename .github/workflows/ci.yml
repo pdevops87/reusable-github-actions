@@ -5,6 +5,10 @@ on:
       appName:
         required: true
         type: string
+      appType:
+        required: true
+        type: string
+
 
 jobs:
   test:
@@ -13,8 +17,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
       # Runs a set of commands using the runners shell
-      - name: Run nginx test
-        run: echo nginx test
+      - name: Run ${{ inputs.appType }} test
+        run: echo ${{ inputs.appType }} test
   docker:
     needs: test
     runs-on: self-hosted
