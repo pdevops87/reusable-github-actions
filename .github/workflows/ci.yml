@@ -60,7 +60,7 @@ jobs:
         with:
           repository: pdevops87/roboshop-helm-v1
       - name: connect to kubernetes api through kubeconfig
-        run:  aws eks update-kubeconfig --name dev
+        run:  aws eks update-kubeconfig --name dev-cluster
       - name: deploy app
         run:  helm upgrade -i ${{ inputs.appName }} -f pass-values-templates/${{ inputs.appName }}.yaml
       - name: argocd-server LB
