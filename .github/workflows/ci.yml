@@ -27,7 +27,7 @@ jobs:
           name: ${{ inputs.appName }}-jar
           path: target/${{ inputs.appName }}-1.0.jar
   test:
-    needs: build
+
     runs-on: self-hosted
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
