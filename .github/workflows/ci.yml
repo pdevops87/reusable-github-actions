@@ -14,18 +14,17 @@ jobs:
     runs-on: self-hosted
 
     steps:
-
+    if: ${{ inputs.apptype == 'maven' }}
       - uses: actions/checkout@v4
 
       - name: Build with Maven
-        if: ${{ inputs.apptype == 'maven' }}
         run: mvn clean package
-      - name: upload artifact
+
+      - uses: actions/upload-artifact@v4
         if: ${{ inputs.apptype == 'maven' }}
-        uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.appName }}
-          path: target/${{ inputs.appName }}-1.0.jar
+          name: shipping-jar
+          path: target/shipping-1.0.jar
   test:
     needs: build
     runs-on: self-hosted
