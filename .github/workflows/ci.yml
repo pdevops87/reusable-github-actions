@@ -39,7 +39,7 @@ jobs:
       - name: docker login
         run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u4j6q5s8
       - uses: actions/download-artifact@v4
-        if: ${{ inputs.toolName == 'maven' }}
+        if: ${{ inputs.appName == 'maven' }}
         with:
           name: shipping-jar
           path: ./
