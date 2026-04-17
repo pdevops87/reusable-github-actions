@@ -63,8 +63,8 @@ jobs:
         run:  aws eks update-kubeconfig --name dev
       - name: deploy app
         run:  helm upgrade -i ${{ inputs.appName }} -f pass-values-templates/${{ inputs.appName }}.yaml
-      - name: argocd-server LB
-        run: echo kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[*].hostname}"
+      # - name: argocd-server LB
+      #   run: echo kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[*].hostname}"
       - name: argocd password
         run: |
         # Wrap the kubectl command in $() to get the encoded string first
