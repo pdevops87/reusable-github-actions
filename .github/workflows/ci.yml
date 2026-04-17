@@ -12,10 +12,12 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    if: ${{ inputs.apptype == 'maven' }}
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Build with Maven
+        if: ${{ inputs.apptype == 'maven' }}
         run: mvn clean package
       - uses: actions/upload-artifact@v4
         with:
@@ -58,6 +60,7 @@ jobs:
         run:  echo aws eks update-kubeconfig --name dev
       - name: deploy app
         run: echo helm upgrade -i ${{ inputs.appName }} -f pass-values-templates/${{ inputs.appName }}.yaml
+      - name:
 
 
 
