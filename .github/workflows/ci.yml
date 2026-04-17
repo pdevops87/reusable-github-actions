@@ -12,9 +12,9 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    if: ${{ inputs.apptype == 'maven' }}
+
     steps:
-       
+    if: ${{ inputs.apptype == 'maven' }}
       - uses: actions/checkout@v4
 
       - name: Build with Maven
