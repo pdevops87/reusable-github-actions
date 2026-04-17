@@ -14,9 +14,9 @@ jobs:
     runs-on: self-hosted
 
     steps:
-       
+    if: ${{ inputs.apptype == 'maven' }}
       - uses: actions/checkout@v4
-        if: ${{ inputs.apptype == 'maven' }}
+
       - name: Build with Maven
         run: mvn clean package
 
