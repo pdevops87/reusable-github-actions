@@ -12,11 +12,11 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    if: ${{ inputs.apptype == 'maven' }}
+
     steps:
        
       - uses: actions/checkout@v4
-        
+        if: ${{ inputs.apptype == 'maven' }}
       - name: Build with Maven
         run: mvn clean package
 
@@ -69,7 +69,7 @@ jobs:
       - name: argocd login
         run: argocd login $( kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}) --insecure --username admin --password $(kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
       - name: create apps to argocd through cli
-        run: argocd app create ${{ inputs.appName }} --repo https://github.com/pdevops87/roboshop-helm-v3-final.git   --path .   --dest-namespace default   --dest-server https://kubernetes.default.svc  --values pass-to-templates/${{ inputs.appName }}.yaml  --upsert
+        run: argocd app create ${{ inputs.appName }} --repo https://github.com/pdevops87/roboshop-helm-v3-final.git  --path .   --dest-namespace default   --dest-server https://kubernetes.default.svc  --values pass-to-templates/${{ inputs.appName }}.yaml  --upsert
 
 
 
