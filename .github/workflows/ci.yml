@@ -62,7 +62,7 @@ jobs:
       - name: connect to kubernetes api through kubeconfig
         run:  aws eks update-kubeconfig --name dev-cluster
       - name: deploy app
-        run:  helm upgrade -i ${{ inputs.appName }} -f pass-values-templates/${{ inputs.appName }}.yaml
+        run:  helm upgrade -i ${{ inputs.appName }} . -f pass-values-templates/${{ inputs.appName }}.yaml
       - name: argocd-server LB
         run: echo kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[*].hostname}"
       - name: argocd password
