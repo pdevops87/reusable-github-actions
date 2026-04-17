@@ -71,7 +71,10 @@ jobs:
          kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode
       - name: argocd login
         run: |
-         run: argocd login $(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}") --insecure --username admin --password $(kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
+          argocd login $(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}") \
+          --insecure \
+          --username admin \
+          --password $(kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
       - name: create apps to argocd through cli
         run: |
           argocd app create ${{ inputs.appName }} --repo https://github.com/pdevops87/roboshop-helm-v3-final.git  --path .   --dest-namespace default   --dest-server https://kubernetes.default.svc  --values pass-to-templates/${{ inputs.appName }}.yaml  --upsert
