@@ -58,26 +58,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: pdevops87/roboshop-helm-v1
-      - name: connect to kubernetes api through kubeconfig
-        run:  aws eks update-kubeconfig --name dev
-      - name: deploy app
-        run:  helm upgrade -i ${{ inputs.appName }} -f pass-values-templates/${{ inputs.appName }}.yaml
-      - name: argocd-server LB
-        run: echo kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[*].hostname}"
-      - name: argocd password
-        run: |
-        # Wrap the kubectl command in $() to get the encoded string first
-         kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode
-      - name: argocd login
-        run: |
-         run: argocd login $(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}") --insecure --username admin --password $(kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
-      - name: create apps to argocd through cli
-        run: |
-          argocd app create ${{ inputs.appName }} --repo https://github.com/pdevops87/roboshop-helm-v3-final.git  --path .   --dest-namespace default   --dest-server https://kubernetes.default.svc  --values pass-to-templates/${{ inputs.appName }}.yaml  --upsert
+          repository: pdevops87/roboshop-helm-v3-final
 
+      - name: Connect to EKS
+        run: aws eks update-kubeconfig --name dev-eks
 
+      - name: Wait for LoadBalancer DNS
+        run: |
+          LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+          echo "Waiting for $LB_HOST ..."
+          
+          while ! nslookup "$LB_HOST" &>>/dev/null; do
+           echo "Waiting for LB DNS..."
+            sleep 10
+          done
+          
+          echo "LB_HOST=$LB_HOST" >> $GITHUB_ENV # Save variables in Github env
+          echo "$LB_HOST is ready!"
 
+      - name: ArgoCD Login
+        run: |
+          # Fetch password and login using the saved LB_HOST
+          ARGOCD_PASS=$(kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
+          argocd login ${{ env.LB_HOST }} --insecure --username admin --password $ARGOCD_PASS
+
+      - name: Create and Sync ArgoCD App
+        run: |
+          argocd app create ${{ inputs.appName }} \
+            --repo https://github.com/pdevops87/roboshop-helm-v3-final.git \
+            --path . \
+            --dest-namespace default \
+            --dest-server https://kubernetes.default.svc \
+            --values pass-to-templates/${{ inputs.appName }}.yaml \
+            --upsert
+          argocd app sync ${{ inputs.appName }}
 
 
 
