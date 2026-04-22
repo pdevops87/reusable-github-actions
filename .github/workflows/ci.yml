@@ -61,7 +61,7 @@ jobs:
           repository: pdevops87/roboshop-helm-v3-final
 
       - name: Connect to EKS
-        run: aws eks update-kubeconfig --name dev-eks
+        run: aws eks update-kubeconfig --name dev-cluster
 
       - name: Wait for LoadBalancer DNS
         run: |
