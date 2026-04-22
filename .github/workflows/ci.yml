@@ -66,13 +66,7 @@ jobs:
       - name: Wait for LoadBalancer DNS
         run: |
           LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-          echo "Waiting for $LB_HOST ..."
-          
-          while ! nslookup "$LB_HOST" &>>/dev/null; do
-           echo "Waiting for LB DNS..."
-            sleep 10
-          done
-          
+                  
           echo "LB_HOST=$LB_HOST" >> $GITHUB_ENV # Save variables in Github env
           echo "$LB_HOST is ready!"
 
