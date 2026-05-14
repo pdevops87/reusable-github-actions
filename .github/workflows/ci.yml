@@ -40,15 +40,11 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      
+      - name: Docker login
+        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 041445559784.dkr.ecr.us-east-1.amazonaws.com
     
       
   
-      - name: docker login
-        run: |
-          echo login to ecr
-          aws ecr-public get-login-password --region us-east-1 \
-          | docker login --username AWS --password-stdin public.ecr.aws/u4j6q5s8
       - uses: actions/download-artifact@v4
         if: ${{ inputs.appName == 'maven' }}
         with:
