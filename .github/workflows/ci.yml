@@ -8,6 +8,9 @@ on:
       apptype:
         required: true
         type: string
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build:
