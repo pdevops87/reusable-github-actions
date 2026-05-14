@@ -49,6 +49,7 @@ jobs:
           rm -rf awscliv2.zip ./aws
       - name: docker login
         run: |
+          echo login to ecr
           aws ecr-public get-login-password --region us-east-1 \
           | docker login --username AWS --password-stdin public.ecr.aws/u4j6q5s8
       - uses: actions/download-artifact@v4
