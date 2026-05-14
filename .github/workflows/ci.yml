@@ -59,7 +59,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: pdevops87/roboshop-helm-v3-final
-
+      - name: Authenticate to AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
       - name: Connect to EKS
         run: aws eks update-kubeconfig --name dev-cluster
 
