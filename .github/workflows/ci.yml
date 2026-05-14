@@ -40,12 +40,13 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      - name: Install AWS CLI
+      - name: Local AWS CLI Installation (No Sudo Required)
         run: |
-          dnf install -y curl unzip
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
+          unzip -q awscliv2.zip
+          ./aws/install -i ~/aws-cli -b ~/bin
+          echo "~/bin" >> $GITHUB_PATH
+          rm -rf awscliv2.zip ./aws
       - name: docker login
         run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u4j6q5s8
       - uses: actions/download-artifact@v4
