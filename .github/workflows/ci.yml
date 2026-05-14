@@ -65,11 +65,24 @@ jobs:
 
       - name: Wait for LoadBalancer DNS
         run: |
+
+          LB_HOST=""
+          while [ -z "$LB_HOST" ]; do
+            LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" 2>/dev/null)
+            if [ -z "$LB_HOST" ]; then
+              echo "Waiting for AWS to allocate hostname..."
+              sleep 10
+            fi
+          done
+
           LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
                   
           echo "LB_HOST=$LB_HOST" >> $GITHUB_ENV # Save variables in Github env
           echo "$LB_HOST is ready!"
 
+
+          echo "Found hostname: $LB_HOST"
+          echo "LB_HOST=$LB_HOST" >> "$GITHUB_ENV"
       - name: ArgoCD Login
         run: |
           # Fetch password and login using the saved LB_HOST
