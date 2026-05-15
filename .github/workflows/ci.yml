@@ -51,7 +51,7 @@ jobs:
             MY_AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
             MY_AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          echo "$MY_AWS_KEY" | base64
+          echo "$MY_AWS_KEY" 
           aws ecr-public get-login-password --region us-east-1\
           | docker login --username AWS --password-stdin public.ecr.aws/u4j6q5s8
       - uses: actions/download-artifact@v4
