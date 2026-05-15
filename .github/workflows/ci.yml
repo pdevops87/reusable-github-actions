@@ -40,13 +40,16 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      - name: Configure AWS Credentials via Keys
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: docker login
+#      - name: Configure AWS Credentials via Keys
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+      - name: Run Docker Login with Secrets
+        env:
+            MY_AWS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            MY_AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: aws ecr-public get-login-password --region us-east-1\
           | docker login --username AWS --password-stdin public.ecr.aws/u4j6q5s8
       - uses: actions/download-artifact@v4
