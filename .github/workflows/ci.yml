@@ -69,11 +69,12 @@ jobs:
         repository: pdevops87/roboshop-helm-v3-final
 
      - name: Connect to EKS
+       env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
        run: aws eks update-kubeconfig --name dev-cluster
 
 
 
-#            --values pass-to-templates/${{ inputs.appName }}.yaml \
-#            --upsert
-#          argocd app sync ${{ inputs.appName }}
-#
+
+
