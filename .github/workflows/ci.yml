@@ -61,51 +61,54 @@ jobs:
       - name: push to aws ecr
         run: docker push public.ecr.aws/u4j6q5s8/${{ inputs.appName }}:v1
 
-#  dev:
-#    needs: docker
-#    runs-on: self-hosted
-#    steps:
-#      - uses: actions/checkout@v4
-#        with:
-#          repository: pdevops87/roboshop-helm-v3-final
-#
-#      - name: Connect to EKS
-#        run: echo "aws eks update-kubeconfig --name dev-cluster"
-#
-#      - name: Wait for LoadBalancer DNS
-#        run: |
-#
-#          LB_HOST=""
-#          while [ -z "$LB_HOST" ]; do
-#            LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" 2>/dev/null)
-#            if [ -z "$LB_HOST" ]; then
-#              echo "Waiting for AWS to allocate hostname..."
-#              sleep 10
-#            fi
-#          done
-#
-#          LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-#
-#          echo "LB_HOST=$LB_HOST" >> $GITHUB_ENV # Save variables in Github env
-#          echo "$LB_HOST is ready!"
-#
-#
-#          echo "Found hostname: $LB_HOST"
-#          echo "LB_HOST=$LB_HOST" >> "$GITHUB_ENV"
-#      - name: ArgoCD Login
-#        run: |
-#          # Fetch password and login using the saved LB_HOST
-#          ARGOCD_PASS=$(kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
-#          argocd login ${{ env.LB_HOST }} --insecure --username admin --password $ARGOCD_PASS
-#
-#      - name: Create and Sync ArgoCD App
-#        run: |
-#          argocd app create ${{ inputs.appName }} \
-#            --repo https://github.com/pdevops87/roboshop-helm-v3-final.git \
-#            --path . \
-#            --dest-namespace default \
-#            --dest-server https://kubernetes.default.svc \
-#            --values pass-to-templates/${{ inputs.appName }}.yaml \
-#            --upsert
-#          argocd app sync ${{ inputs.appName }}
-#
+  dev:
+    needs: docker
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: pdevops87/roboshop-helm-v3-final
+
+      - name: Connect to EKS
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: aws eks update-kubeconfig --name dev-cluster
+
+      - name: Wait for LoadBalancer DNS
+        run: |
+
+          LB_HOST=""
+          while [ -z "$LB_HOST" ]; do
+            LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" 2>/dev/null)
+            if [ -z "$LB_HOST" ]; then
+              echo "Waiting for AWS to allocate hostname..."
+              sleep 10
+            fi
+          done
+
+          LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+
+          echo "LB_HOST=$LB_HOST" >> $GITHUB_ENV # Save variables in Github env
+          echo "$LB_HOST is ready!"
+
+
+          echo "Found hostname: $LB_HOST"
+          echo "LB_HOST=$LB_HOST" >> "$GITHUB_ENV"
+      - name: ArgoCD Login
+        run: |
+          # Fetch password and login using the saved LB_HOST
+          ARGOCD_PASS=$(kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
+          argocd login ${{ env.LB_HOST }} --insecure --username admin --password $ARGOCD_PASS
+
+      - name: Create and Sync ArgoCD App
+        run: |
+          argocd app create ${{ inputs.appName }} \
+            --repo https://github.com/pdevops87/roboshop-helm-v3-final.git \
+            --path . \
+            --dest-namespace default \
+            --dest-server https://kubernetes.default.svc \
+            --values pass-to-templates/${{ inputs.appName }}.yaml \
+            --upsert
+          argocd app sync ${{ inputs.appName }}
+
