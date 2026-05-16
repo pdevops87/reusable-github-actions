@@ -92,8 +92,6 @@ jobs:
           echo "$LB_HOST is ready!"
   
 
-        echo "Found hostname: $LB_HOST"
-        echo "LB_HOST=$LB_HOST" >> "$GITHUB_ENV"
 
 
 
