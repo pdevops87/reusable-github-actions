@@ -75,7 +75,7 @@ jobs:
           echo $LB_HOST
      
          ARGOCD_PASS=$(kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
-         argocd login ${LB_HOST} --insecure --username admin --password ${ARGOCD_PASS} 
+         argocd login "${LB_HOST}" --insecure --username admin --password "${ARGOCD_PASS}" 
          argocd app create ${{ inputs.appName }} \
              --repo https://github.com/pdevops87/roboshop-helm-v3-final.git \
              --path . \
