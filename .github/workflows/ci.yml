@@ -76,15 +76,11 @@ jobs:
           # Initialize empty variable
           LB_HOST=""
           
-          while [ -z "$LB_HOST" ]; do
+         
            
            LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-            
-            if [ -z "$LB_HOST" ]; then
-              echo "Still waiting for AWS to allocate hostname... checking again in 10 seconds."
-              sleep 10
-            fi
-          done
+           echo $LB_HOST  
+          
 
 
 
