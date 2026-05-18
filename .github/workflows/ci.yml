@@ -46,6 +46,31 @@ jobs:
 #          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
 #          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 #          aws-region: us-east-1
+
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::041445559784:role/admin-role
+          aws-region: us-east-1
+
+      - name: Provision EKS Cluster Access Entries
+        run: |
+          # 1. Create the access entry for the target Helm execution role
+          aws eks create-access-entry \
+            --cluster-name dev-cluster \
+            --principal-arn arn:aws:iam::041445559784:role/github-eks-role \
+            --region us-east-1 \
+            --type STANDARD
+          
+          # 2. Attach Cluster Admin permissions so Helm can deploy resources
+          aws eks associate-access-policy \
+            --cluster-name dev-cluster \
+            --principal-arn arn:aws:iam::041445559784:role/github-eks-role \
+            --region us-east-1 \
+            --policy-arn arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy \
+            --access-scope type=cluster
+
       - name: Run Docker Login with Secrets
         env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
