@@ -71,18 +71,21 @@ jobs:
          
           aws eks update-kubeconfig --name dev-cluster --region us-east-1
           helm upgrade -i ${{ inputs.appName }} . -f pass-to-templates/${{ inputs.appName }}.yaml
+        
+
+          # Initialize empty variable
           LB_HOST=""
+          
           while [ -z "$LB_HOST" ]; do
-            LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[*].hostname}" >>/dev/null)
+           
+           LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+            
             if [ -z "$LB_HOST" ]; then
-              echo "Waiting for AWS to allocate hostname..."
+              echo "Still waiting for AWS to allocate hostname... checking again in 10 seconds."
               sleep 10
             fi
           done
 
-          LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-          echo "LB_HOST=$LB_HOST" >> $GITHUB_ENV # Save variables in Github env
-          echo "$LB_HOST is ready!"
 
 
       
