@@ -76,20 +76,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
        run: aws eks update-kubeconfig --name dev-cluster
 
-     - name: Wait for LoadBalancer DNS
-       run: |
-
-          LB_HOST=""
-          while [ -z "$LB_HOST" ]; do
-            LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[*].hostname}" >>/dev/null)
-            if [ -z "$LB_HOST" ]; then
-              echo "Waiting for AWS to allocate hostname..."
-              sleep 10 ;
-            fi
-          done
-
-          LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-          echo "LB_HOST=$LB_HOST" >> $GITHUB_ENV # Save variables in Github env
-          echo "$LB_HOST is ready!"
+    
 
     
