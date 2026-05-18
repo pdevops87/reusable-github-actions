@@ -70,11 +70,10 @@ jobs:
        run: |
           aws eks update-kubeconfig --name dev-cluster --region us-east-1
           helm upgrade -i ${{ inputs.appName }} . -f pass-to-templates/${{ inputs.appName }}.yaml
-     - name: Wait for LoadBalancer DNS
-       run: |
           LB_HOST=""
           LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
           echo $LB_HOST
+     
          ARGOCD_PASS=$(kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
          argocd login ${LB_HOST} --insecure --username admin --password ${ARGOCD_PASS} 
          argocd app create ${{ inputs.appName }} \
