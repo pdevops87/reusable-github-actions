@@ -65,11 +65,20 @@ jobs:
    runs-on: self-hosted
    steps:
      - uses: actions/checkout@v4
+       name: checkout
+    
+        
+
+     
        with:
         repository: pdevops87/roboshop-helm-v3-final
         role-to-assume: arn:aws:iam::041445559784:role/dev-eks-role
         aws-region: us-east-1
-
+     - uses: aws-actions/configure-aws-credentials@v4
+       name: aws credentials
+       with:
+        role-to-assume: arn:aws:iam::041445559784:role/github-eks-role
+        aws-region: us-east-1
     
    
      - name: run helm application
