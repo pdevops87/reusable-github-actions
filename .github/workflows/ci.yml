@@ -73,6 +73,7 @@ jobs:
          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
          AWS_DEFAULT_REGION: us-east-1
        run: |
+         export KUBERNETES_MASTER=$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}')
          aws eks update-kubeconfig --name dev-cluster --region us-east-1
          helm upgrade -i ${{ inputs.appName }} . -f pass-to-templates/${{ inputs.appName }}.yaml
 
