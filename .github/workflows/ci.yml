@@ -67,6 +67,11 @@ jobs:
      - uses: actions/checkout@v4
        with:
         repository: pdevops87/roboshop-helm-v3-final
+        role-to-assume: arn:aws:iam::041445559784:role/dev-eks-role
+        aws-region: us-east-1
+
+    
+   
      - name: run helm application
        env:
          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
