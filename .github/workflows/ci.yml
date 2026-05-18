@@ -84,7 +84,7 @@ jobs:
             LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[*].hostname}" >>/dev/null)
             if [ -z "$LB_HOST" ]; then
               echo "Waiting for AWS to allocate hostname..."
-              sleep 10
+              sleep 10 ;
             fi
           done
 
