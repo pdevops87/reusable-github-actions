@@ -59,22 +59,25 @@ jobs:
    runs-on: self-hosted
    steps:
      - uses: actions/checkout@v4
-       name: checkout
-     - name: get credentials
-       env:
-         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         AWS_DEFAULT_REGION: us-east-1
-       run: |
-         aws eks update-kubeconfig --name dev-cluster --region us-east-1
-
        with:
         repository: pdevops87/roboshop-helm-v3-final
 
-     - name: run helm application
-       run: helm upgrade -i ${{ inputs.appName }} . -f pass-to-templates/${{ inputs.appName }}.yaml
+     - name: Connect to EKS
+       env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+       run: aws eks update-kubeconfig --name dev-cluster
 
-#     - name: Wait for LoadBalancer DNS
+
+     - name: get credentials
+       run: |
+         aws eks update-kubeconfig --name dev-cluster --region us-east-1
+         helm upgrade -i ${{ inputs.appName }} . -f pass-to-templates/${{ inputs.appName }}.yaml
+
+      
+
+   #     - name: Wait for LoadBalancer DNS
 #       run: |
 #
 #          LB_HOST=""
