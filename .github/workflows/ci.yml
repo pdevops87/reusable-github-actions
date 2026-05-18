@@ -80,6 +80,19 @@ jobs:
            
            LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
            echo $LB_HOST  
+                    ARGOCD_PASS=$(kubectl get secrets argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
+           argocd login ${LB_HOST} --insecure --username admin --password ${ARGOCD_PASS} 
+           argocd app create ${{ inputs.appName }} \
+               --repo https://github.com/pdevops87/roboshop-helm-v3-final.git \
+               --path . \
+               --dest-namespace default \
+               --dest-server https://kubernetes.default.svc \
+               --values pass-to-templates/${{ inputs.appName }}.yaml \
+               --upsert
+             argocd app sync ${{ inputs.appName }}
+    #         argocd app health checks
+             argocd app wait ${{ inputs.appName }} --timeout 60
+  
           
 
 
