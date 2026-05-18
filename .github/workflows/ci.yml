@@ -68,9 +68,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
        run: |
-         aws eks update-kubeconfig --name dev-cluster
+         
           aws eks update-kubeconfig --name dev-cluster --region us-east-1
           helm upgrade -i ${{ inputs.appName }} . -f pass-to-templates/${{ inputs.appName }}.yaml
+
+      
 
     
 
