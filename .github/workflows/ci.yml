@@ -81,7 +81,7 @@ jobs:
              echo "Fetching ArgoCD password..."
 
             ARGOCD_PASS=$(kubectl get secret argocd-initial-admin-secret \
-              -n argocd \
+              -n default
               -o jsonpath="{.data.password}" | base64 --decode)
         
             echo "Logging into ArgoCD..."
