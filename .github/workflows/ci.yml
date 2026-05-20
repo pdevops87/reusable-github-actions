@@ -96,7 +96,7 @@ jobs:
               --path . \
               --dest-namespace default \
               --dest-server https://kubernetes.default.svc \
-              --helm-values "pass-to-templates/${{ inputs.appName }}.yaml" \
+              --values "pass-to-templates/${{ inputs.appName }}.yaml" \
               --upsert
         
             argocd app sync "${{ inputs.appName }}"
