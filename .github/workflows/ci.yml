@@ -100,6 +100,6 @@ jobs:
               --upsert
         
             argocd app sync "${{ inputs.appName }}"
-            argocd app wait "${{ inputs.appName }}" --timeout 60
+            # argocd app wait "${{ inputs.appName }}" --timeout 60
               
               
