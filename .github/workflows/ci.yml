@@ -49,7 +49,7 @@ jobs:
         if: ${{ inputs.appName == 'maven' }}
         with:
           name: shipping-jar
-          path:  ./
+          path:  .
       - name: build docker image
         run: docker build -t public.ecr.aws/u4j6q5s8/${{ inputs.appName }}:v1 .
       - name: push to aws ecr
