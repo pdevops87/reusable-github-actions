@@ -78,18 +78,14 @@ jobs:
             echo "Still waiting for hostname allocation... sleeping 10s"
             sleep 10
            fi
-          done
-          echo "LoadBalancer Hostname allocated: $LB_HOST"
-          ARGOCD_PASS=$(kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode |)
-          argocd login "${LB_HOST}" --insecure --username admin --password "${ARGOCD_PASS}"
-          argocd app create "${{ inputs.appName }}" \
-          --repo "https://github.com/pdevops87/roboshop-helm-v3-final.git" \
-          --path "." \
-          --dest-namespace "default" \
-          --dest-server "https://kubernetes.default.svc" \
-          --values "pass-to-templates/${{ inputs.appName }}.yaml" \
-          --upsert
-          argocd app sync "${{ inputs.appName }}"
-          argocd app wait "${{ inputs.appName }}" --timeout 60
+           done
+       # - name:
+       #   run: |
+       #    ARGOCD_PASS=$(kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode |)
+       #    argocd login "${LB_HOST}" --insecure --username admin --password "${ARGOCD_PASS}"
+       #    argocd app create "${{ inputs.appName }}" --repo "https://github.com/pdevops87/roboshop-helm-v3-final.git" --path . --dest-namespace "default" --dest-server "https://kubernetes.default.svc" --values "pass-to-templates/${{ inputs.appName }}.yaml" --upsert
+       #    argocd app sync "${{ inputs.appName }}"
+       #    argocd app wait "${{ inputs.appName }}" --timeout 60
+         
       
       
