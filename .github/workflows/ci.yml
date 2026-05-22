@@ -11,10 +11,9 @@ on:
 
 jobs:
   build:
-   
     runs-on: self-hosted
-    # Only run build if it's a maven app
-     if: ${{ inputs.apptype == 'maven' }}
+     # Only run build if it's a maven app
+    if: ${{ inputs.apptype == 'maven' }}
     steps:
       - uses: actions/checkout@v4
 
