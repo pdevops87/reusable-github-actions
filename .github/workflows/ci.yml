@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    # Only run build if it's a maven app
+     # Only run build if it's a maven app
     if: ${{ inputs.apptype == 'maven' }}
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
           name: ${{ inputs.appName }}-jar
           path: target/${{ inputs.appName }}-1.0.jar
   test:
-    needs: build
+   
     runs-on: self-hosted
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
