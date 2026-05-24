@@ -27,7 +27,7 @@ jobs:
           name: ${{ inputs.appName }}-jar
           path: target/${{ inputs.appName }}-1.0.jar
   test:
-
+    needs: build
     runs-on: self-hosted
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -45,10 +45,12 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u4j6q5s8
+        if: ${{ inputs.apptype == 'maven' }}
       - uses: actions/download-artifact@v4
-        if: ${{ inputs.appName == 'maven' }}
+        name: download artifact
+        if: ${{ inputs.apptype == 'maven' }}
         with:
-          name: shipping-jar
+          name: ${{ inputs.appName }}-jar
           path:  .
       - name: build docker image
         run: docker build -t public.ecr.aws/u4j6q5s8/${{ inputs.appName }}:v1 .
