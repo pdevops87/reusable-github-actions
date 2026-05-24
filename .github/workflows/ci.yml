@@ -44,8 +44,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-       - name: Clear invalid ECR tokens
-        run: docker logout 
+       
         run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u4j6q5s8
         if: ${{ inputs.apptype == 'maven' }}
       - uses: actions/download-artifact@v4
