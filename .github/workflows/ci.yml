@@ -13,10 +13,10 @@ jobs:
   build:
     runs-on: self-hosted
      # Only run build if it's a maven app
-#    if: ${{ inputs.apptype == 'maven' }}
+    if: ${{ inputs.apptype == 'maven' }}
     steps:
       - uses: actions/checkout@v4
-        if: ${{ inputs.apptype == 'maven' }}
+        # if: ${{ inputs.apptype == 'maven' }}
       - name: Build with Maven
         if: ${{ inputs.apptype == 'maven' }}
         run: mvn clean package
