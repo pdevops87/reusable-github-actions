@@ -16,7 +16,7 @@ jobs:
 #    if: ${{ inputs.apptype == 'maven' }}
     steps:
       - uses: actions/checkout@v4
-#        if: ${{ inputs.apptype == 'maven' }}
+        if: ${{ inputs.apptype == 'maven' }}
       - name: Build with Maven
         if: ${{ inputs.apptype == 'maven' }}
         run: mvn clean package
