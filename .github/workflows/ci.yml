@@ -70,7 +70,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: pdevops87/roboshop-helm-v3-final
+          repository: pdevops87/roboshop-helm-v4-ingress
 
       - name: Connect to EKS
         env:
