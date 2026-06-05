@@ -47,10 +47,9 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-       
         run: |
-         docker logout public.ecr.aws
-         aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/u4j6q5s8
+           docker logout 041445559784.dkr.ecr.us-east-1.amazonaws.com
+           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 041445559784.dkr.ecr.us-east-1.amazonaws.com
         if: ${{ inputs.apptype == 'maven' }}
       - uses: actions/download-artifact@v4
         name: download artifact
@@ -60,10 +59,10 @@ jobs:
           path:  .
       
       - name: build docker image
-        run: docker build -t public.ecr.aws/u4j6q5s8/${{ inputs.appName }}:v1 .
-     
+        run: docker build -t 041445559784.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.appName }}:v1 .
+
       - name: push to aws ecr
-        run: docker push public.ecr.aws/u4j6q5s8/${{ inputs.appName }}:v1
+        run: docker push 041445559784.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.appName }}:v1
   dev:
     needs: docker
     runs-on: self-hosted
