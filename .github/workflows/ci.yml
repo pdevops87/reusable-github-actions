@@ -102,7 +102,7 @@ jobs:
            echo "Creating application..."
           
            argocd app create "${{ inputs.appName }}" \
-             --repo "https://github.com/pdevops87/roboshop-helm-v3-final.git" \
+             --repo "https://github.com/pdevops87/roboshop-helm-v4-ingress.git" \
              --path . \
              --dest-namespace default \
              --dest-server https://kubernetes.default.svc \
