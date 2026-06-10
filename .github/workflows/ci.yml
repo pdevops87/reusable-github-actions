@@ -67,13 +67,13 @@ jobs:
       - name: push to aws ecr
        
         run: docker push 041445559784.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.appName }}:v1
-#   dev:
-#     needs: docker
-#     runs-on: self-hosted
-#     steps:
-#       - uses: actions/checkout@v4
-#         with:
-#           repository: pdevops87/roboshop-helm-v4-ingress
+  dev:
+    needs: docker
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: pdevops87/roboshop-helm-v4-ingress
 
 #       - name: Connect to EKS
 #         env:
