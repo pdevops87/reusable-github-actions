@@ -67,53 +67,53 @@ jobs:
       - name: push to aws ecr
        
         run: docker push 041445559784.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.appName }}:v1
-  dev:
-    needs: docker
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: pdevops87/roboshop-helm-v4-ingress
+#   dev:
+#     needs: docker
+#     runs-on: self-hosted
+#     steps:
+#       - uses: actions/checkout@v4
+#         with:
+#           repository: pdevops87/roboshop-helm-v4-ingress
 
-      - name: Connect to EKS
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
-        run: |
-          aws eks update-kubeconfig --name dev-cluster --region us-east-1
-          helm upgrade -i "${{ inputs.appName }}" . -f "pass-to-templates/${{ inputs.appName }}.yaml"
-          ARGOCD_PASS=$(kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
-           echo "argocd password:${ARGOCD_PASS}"
-           echo "Logging into ArgoCD..."
-           #          earlier getting host through argocd-server, now getting through ingress, so mention dns name argocd-dev.pdevops78.online
-           argocd login argocd-dev.pdevops78.online \
-             --insecure \
-             --username admin \
-             --password "$ARGOCD_PASS"
-#          echo "Waiting for AWS to allocate LoadBalancer hostname..."
-#           LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-#
-#          if [ -z "$LB_HOST" ]; then
-#           echo "Still waiting for hostname allocation... sleeping 10s"
-#           sleep 10
-#          fi
-#            echo "$LB_HOST"
-#            echo "Fetching ArgoCD password..."
+#       - name: Connect to EKS
+#         env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           AWS_DEFAULT_REGION: us-east-1
+#         run: |
+#           aws eks update-kubeconfig --name dev-cluster --region us-east-1
+#           helm upgrade -i "${{ inputs.appName }}" . -f "pass-to-templates/${{ inputs.appName }}.yaml"
+#           ARGOCD_PASS=$(kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
+#            echo "argocd password:${ARGOCD_PASS}"
+#            echo "Logging into ArgoCD..."
+#            #          earlier getting host through argocd-server, now getting through ingress, so mention dns name argocd-dev.pdevops78.online
+#            argocd login argocd-dev.pdevops78.online \
+#              --insecure \
+#              --username admin \
+#              --password "$ARGOCD_PASS"
+# #          echo "Waiting for AWS to allocate LoadBalancer hostname..."
+# #           LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+# #
+# #          if [ -z "$LB_HOST" ]; then
+# #           echo "Still waiting for hostname allocation... sleeping 10s"
+# #           sleep 10
+# #          fi
+# #            echo "$LB_HOST"
+# #            echo "Fetching ArgoCD password..."
           
            
 
           
-           echo "Creating application..."
+#            echo "Creating application..."
           
-           argocd app create "${{ inputs.appName }}" \
-             --repo "https://github.com/pdevops87/roboshop-helm-v4-ingress.git" \
-             --path . \
-             --dest-namespace default \
-             --dest-server https://kubernetes.default.svc \
-             --values "pass-to-templates/${{ inputs.appName }}.yaml" \
-             --upsert
+#            argocd app create "${{ inputs.appName }}" \
+#              --repo "https://github.com/pdevops87/roboshop-helm-v4-ingress.git" \
+#              --path . \
+#              --dest-namespace default \
+#              --dest-server https://kubernetes.default.svc \
+#              --values "pass-to-templates/${{ inputs.appName }}.yaml" \
+#              --upsert
           
-           argocd app sync "${{ inputs.appName }}"
-           # argocd app wait "${{ inputs.appName }}" --timeout 60
+#            argocd app sync "${{ inputs.appName }}"
+#            # argocd app wait "${{ inputs.appName }}" --timeout 60
               
