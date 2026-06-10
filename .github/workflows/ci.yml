@@ -83,21 +83,21 @@ jobs:
         run: |
           aws eks update-kubeconfig --name dev-cluster --region us-east-1
           helm upgrade -i "${{ inputs.appName }}" . -f "pass-to-templates/${{ inputs.appName }}.yaml"
-          echo "Waiting for AWS to allocate LoadBalancer hostname..."
-           LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-          
-          if [ -z "$LB_HOST" ]; then
-           echo "Still waiting for hostname allocation... sleeping 10s"
-           sleep 10
-          fi
-            echo "$LB_HOST"
-            echo "Fetching ArgoCD password..."
+#          echo "Waiting for AWS to allocate LoadBalancer hostname..."
+#           LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+#
+#          if [ -z "$LB_HOST" ]; then
+#           echo "Still waiting for hostname allocation... sleeping 10s"
+#           sleep 10
+#          fi
+#            echo "$LB_HOST"
+#            echo "Fetching ArgoCD password..."
           
            ARGOCD_PASS=$(kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
-          
+           echo "argocd password:${ARGOCD_PASS}"
            echo "Logging into ArgoCD..."
-          
-           argocd login "$LB_HOST" \
+#          earlier getting host through argocd-server, now getting through ingress, so mention dns name argocd-dev.pdevops78.online
+           argocd login argocd-dev.pdevops78.online \
              --insecure \
              --username admin \
              --password "$ARGOCD_PASS"
