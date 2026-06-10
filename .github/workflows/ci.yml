@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-     # Only run build if it's a maven app
+    # Only run build if it's a maven app
     # if: ${{ inputs.apptype == 'maven' }}
     steps:
       - uses: actions/checkout@v4
@@ -47,15 +47,12 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run:  aws sts get-caller-identity
-      
-      - name: docker login
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: 
-         # docker logout public.ecr.aws
+          AWS_DEFAULT_REGION: us-east-1
+        run: |
+          aws sts get-caller-identity
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 041445559784.dkr.ecr.us-east-1.amazonaws.com
+        
+
         if: ${{ inputs.apptype == 'maven' }}
       - uses: actions/download-artifact@v4
         name: download artifact
@@ -63,11 +60,12 @@ jobs:
         with:
           name: ${{ inputs.appName }}-jar
           path:  .
-      
+
       - name: build docker image
         run: docker build -t 041445559784.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.appName }}:v1 .
-     
+
       - name: push to aws ecr
+
         run: docker push 041445559784.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.appName }}:v1
   dev:
     needs: docker
@@ -107,7 +105,7 @@ jobs:
            echo "Creating application..."
           
            argocd app create "${{ inputs.appName }}" \
-             --repo "https://github.com/pdevops87/roboshop-helm-v3-final.git" \
+             --repo "https://github.com/pdevops87/roboshop-helm-v4-ingress.git" \
              --path . \
              --dest-namespace default \
              --dest-server https://kubernetes.default.svc \
