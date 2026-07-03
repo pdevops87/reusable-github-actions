@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-     # Only run build if it's a maven app
+    # Only run build if it's a maven app
     # if: ${{ inputs.apptype == 'maven' }}
     steps:
       - uses: actions/checkout@v4
@@ -49,10 +49,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
         run: |
-           aws sts get-caller-identity
-           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 041445559784.dkr.ecr.us-east-1.amazonaws.com
-     
-          
+          aws sts get-caller-identity
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 041445559784.dkr.ecr.us-east-1.amazonaws.com
+        
+        
         if: ${{ inputs.apptype == 'maven' }}
       - uses: actions/download-artifact@v4
         name: download artifact
@@ -63,8 +63,8 @@ jobs:
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-     
-      
+
+
 
       - name: Build, tag, and push image to Amazon ECR
         env:
@@ -81,7 +81,7 @@ jobs:
       - name: Log out of Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
-   dev:
+  dev:
     needs: docker
     runs-on: self-hosted
     steps:
@@ -97,12 +97,12 @@ jobs:
         run: |
           aws eks update-kubeconfig --name dev-cluster --region us-east-1
           helm upgrade -i "${{ inputs.appName }}" . -f "pass-to-templates/${{ inputs.appName }}.yaml"
-
+          
           
            ARGOCD_PASS=$(kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
            echo "argocd password:${ARGOCD_PASS}"
            echo "Logging into ArgoCD..."
-    
+          
            argocd login argocd-dev.pdevops78.online \
              --insecure \
              --username admin \
@@ -119,4 +119,3 @@ jobs:
              --upsert
           
            argocd app sync "${{ inputs.appName }}"
-  
