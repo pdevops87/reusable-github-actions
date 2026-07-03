@@ -103,7 +103,7 @@ jobs:
            echo "argocd password:${ARGOCD_PASS}"
            echo "Logging into ArgoCD..."
           
-           argocd login argocd-dev.pdevops78.online \
+           argocd login argocd-dev.pdevops87.online \
              --insecure \
              --username admin \
              --password "$ARGOCD_PASS"
