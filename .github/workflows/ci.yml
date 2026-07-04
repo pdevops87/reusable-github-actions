@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-     # Only run build if it's a maven app
+    # Only run build if it's a maven app
     # if: ${{ inputs.apptype == 'maven' }}
     steps:
       - uses: actions/checkout@v4
@@ -49,10 +49,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
         run: |
-           aws sts get-caller-identity
-           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 041445559784.dkr.ecr.us-east-1.amazonaws.com
-     
-          
+          aws sts get-caller-identity
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 041445559784.dkr.ecr.us-east-1.amazonaws.com
+        
+
         if: ${{ inputs.apptype == 'maven' }}
       - uses: actions/download-artifact@v4
         name: download artifact
@@ -60,13 +60,27 @@ jobs:
         with:
           name: ${{ inputs.appName }}-jar
           path:  .
-      
-      - name: build docker image
-        run: docker build -t 041445559784.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.appName }}:v1 .
-     
-      - name: push to aws ecr
-       
-        run: docker push 041445559784.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.appName }}:v1
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+          ECR_REGISTRY: 041445559784.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY: ${{ inputs.appName }}
+          IMAGE_TAG: v1
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Log out of Amazon ECR
+        if: always()
+        run: docker logout 041445559784.dkr.ecr.us-east-1.amazonaws.com
   dev:
     needs: docker
     runs-on: self-hosted
@@ -83,21 +97,13 @@ jobs:
         run: |
           aws eks update-kubeconfig --name dev-cluster --region us-east-1
           helm upgrade -i "${{ inputs.appName }}" . -f "pass-to-templates/${{ inputs.appName }}.yaml"
-#          echo "Waiting for AWS to allocate LoadBalancer hostname..."
-#           LB_HOST=$(kubectl get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-#
-#          if [ -z "$LB_HOST" ]; then
-#           echo "Still waiting for hostname allocation... sleeping 10s"
-#           sleep 10
-#          fi
-#            echo "$LB_HOST"
-#            echo "Fetching ArgoCD password..."
+          
           
            ARGOCD_PASS=$(kubectl get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
            echo "argocd password:${ARGOCD_PASS}"
            echo "Logging into ArgoCD..."
-#          earlier getting host through argocd-server, now getting through ingress, so mention dns name argocd-dev.pdevops78.online
-           argocd login argocd-dev.pdevops78.online \
+          
+           argocd login argocd-dev.pdevops87.online \
              --insecure \
              --username admin \
              --password "$ARGOCD_PASS"
@@ -113,5 +119,3 @@ jobs:
              --upsert
           
            argocd app sync "${{ inputs.appName }}"
-           # argocd app wait "${{ inputs.appName }}" --timeout 60
-              
