@@ -111,6 +111,8 @@ jobs:
                --values "pass-to-templates/${{ inputs.appName }}.yaml" \
                --upsert
             
-             argocd app sync "${{ inputs.appName }}"
-             argocd app wait "${{ inputs.appName }}" --timeout 60
+            
+             argocd app sync "${{ inputs.appName }}" --insecure --grpc-web
+
+             # argocd app wait "${{ inputs.appName }}" --timeout 60
               
